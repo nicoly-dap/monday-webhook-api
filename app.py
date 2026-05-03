@@ -7,7 +7,6 @@ app = Flask(__name__)
 MONDAY_TOKEN = os.environ.get("MONDAY_TOKEN")
 
 def get_item_details(item_id):
-    """Busca os detalhes do item na API do Monday"""
     query = f"""
     {{
       items (ids: [{item_id}]) {{
@@ -40,7 +39,6 @@ def webhook():
         try:
             data = request.json or {}
 
-            # Responder ao challenge do Monday
             if 'challenge' in data:
                 return jsonify({"challenge": data['challenge']}), 200
 
@@ -52,7 +50,6 @@ def webhook():
 
             print(f"Novo item criado: {item_id}")
 
-            # Buscar detalhes do item via API
             details = get_item_details(item_id)
             print(f"Detalhes do item: {details}")
 
@@ -64,19 +61,17 @@ def webhook():
             item_name = item.get('name', '')
             columns = item.get('column_values', [])
 
-            # Encontrar o número do WhatsApp
-whatsapp_number = None
-for col in columns:
-    col_id = col.get('id', '').lower()
-    col_text = col.get('text', '')
-    if 'whatsapp' in col_id or 'phone' in col_id or 'telefone' in col_id:
-        whatsapp_number = col_text
-        break
+            print(f"Todas as colunas: {columns}")
 
-print(f"Cliente: {item_name} | WhatsApp: {whatsapp_number}")
-print(f"Todas as colunas: {columns}")
+            whatsapp_number = None
+            for col in columns:
+                col_id = col.get('id', '').lower()
+                col_text = col.get('text', '')
+                if 'whatsapp' in col_id or 'phone' in col_id or 'telefone' in col_id:
+                    whatsapp_number = col_text
+                    break
 
-            # Aqui vai o envio da mensagem (próximo passo)
+            print(f"Cliente: {item_name} | WhatsApp: {whatsapp_number}")
 
             return jsonify({"status": "ok"}), 200
 
