@@ -14,7 +14,7 @@ def get_item_details(item_id):
         name
         column_values {{
           id
-          title
+          type
           text
           value
         }}
@@ -65,13 +65,16 @@ def webhook():
             columns = item.get('column_values', [])
 
             # Encontrar o número do WhatsApp
-            whatsapp_number = None
-            for col in columns:
-                if 'whatsapp' in col.get('title', '').lower() or 'telefone' in col.get('title', '').lower() or 'celular' in col.get('title', '').lower():
-                    whatsapp_number = col.get('text', '')
-                    break
+whatsapp_number = None
+for col in columns:
+    col_id = col.get('id', '').lower()
+    col_text = col.get('text', '')
+    if 'whatsapp' in col_id or 'phone' in col_id or 'telefone' in col_id:
+        whatsapp_number = col_text
+        break
 
-            print(f"Cliente: {item_name} | WhatsApp: {whatsapp_number}")
+print(f"Cliente: {item_name} | WhatsApp: {whatsapp_number}")
+print(f"Todas as colunas: {columns}")
 
             # Aqui vai o envio da mensagem (próximo passo)
 
